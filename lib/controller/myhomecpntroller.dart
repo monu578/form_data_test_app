@@ -5,14 +5,19 @@ import 'package:machine_test/image_model.dart';
 import 'package:http/http.dart' as http;
 
 class MyHomeController extends GetxController {
+  bool isLoading = false;
   @override
   void onInit() {
+    isLoading = false;
+    getUserDetailApi();
     super.onInit();
   }
 
   List<ImageData> images = [];
 
   Future<List<ImageData>> getUserDetailApi() async {
+    isLoading = true;
+    update();
     try {
       var request = http.MultipartRequest('POST', Uri.parse('https://dev3.xicom.us/xttest/getdata.php'));
       request.fields['user_id'] = "108";
@@ -29,10 +34,16 @@ class MyHomeController extends GetxController {
         } else {
           throw Exception('API returned error: ${data['message']}');
         }
+        isLoading = false;
+        update();
       } else {
+        isLoading = false;
+        update();
         throw Exception('Failed to fetch images. Status code: ${response.statusCode}');
       }
     } catch (error) {
+      isLoading = false;
+      update();
       print('Error fetching images: $error');
       throw error;
     }

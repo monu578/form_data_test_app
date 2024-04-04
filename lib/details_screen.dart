@@ -105,7 +105,7 @@ class DetailScreen extends StatelessWidget {
                   width: Get.height / 5,
                   child: ElevatedButton(
                     onPressed: () {
-                      controller.submitForm(imageUrl!.xtImage.toString());
+                      controller.validateForm(imageUrl!.xtImage.toString());
                     },
                     child: const Text('Submit'),
                   ),

@@ -16,72 +16,71 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Image List"),
-        centerTitle: true,
-      ),
-      body: FutureBuilder(
-        future: controller.getUserDetailApi(),
-        builder: (context, snapshot) {
-          return Column(
-            children: [
-              Expanded(
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    mainAxisSpacing: 4.0,
-                    crossAxisSpacing: 4.0,
-                  ),
+    return GetBuilder<MyHomeController>(builder: (controller) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("Image List"),
+          centerTitle: true,
+        ),
+        body: controller.isLoading
+            ? const SizedBox()
+            : Column(
+                children: [
+                  Expanded(
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 1,
+                        mainAxisSpacing: 4.0,
+                        crossAxisSpacing: 4.0,
+                      ),
 
-                  // Set itemCount to initiallyDisplayedImages initially
-                  itemCount: initiallyDisplayedImages,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DetailScreen(
-                              imageUrl: controller.images[index],
-                            ),
+                      // Set itemCount to initiallyDisplayedImages initially
+                      itemCount: initiallyDisplayedImages,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailScreen(
+                                  imageUrl: controller.images[index],
+                                ),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Image.network(
+                                controller.images[index].xtImage.toString(),
+                                fit: BoxFit.fill,
+                                // height: 300,
+                                width: double.infinity,
+                              ),
+                            ],
                           ),
                         );
                       },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Image.network(
-                            controller.images[index].xtImage.toString(),
-                            fit: BoxFit.fill,
-                            // height: 300,
-                            width: double.infinity,
+                    ),
+                  ),
+                  if (controller.images.length > initiallyDisplayedImages)
+                    initiallyDisplayedImages == 10
+                        ? SizedBox()
+                        : Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  initiallyDisplayedImages += 2;
+                                });
+                              },
+                              child: Text('Load More'),
+                            ),
                           ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                ],
               ),
-              if (controller.images.length > initiallyDisplayedImages)
-                initiallyDisplayedImages == 10
-                    ? SizedBox()
-                    : Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              initiallyDisplayedImages += 2;
-                            });
-                          },
-                          child: Text('Load More'),
-                        ),
-                      ),
-            ],
-          );
-        },
-      ),
-    );
+      );
+    });
   }
 }
